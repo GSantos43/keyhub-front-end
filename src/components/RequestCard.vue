@@ -1,9 +1,6 @@
 <template>
-  <q-card class=" text-white q-pa-lg shadow-5 card-request"  flat bordered style="border-color: #333">
-    <div
-      class="flex flex-start text-overline text-grey-5"
-      style="letter-spacing: 1px; line-height: 1.2"
-    >
+  <q-card class="text-white q-pa-lg shadow-5 card-request" flat bordered style="border-color: #333">
+    <div class="flex flex-start" style="letter-spacing: 1px; line-height: 1.2">
       <div class="row items-center q-gutter-x-sm">
         <q-avatar rounded color="grey-9" text-color="white" size="40px" class="text-weight-bold">
           M
@@ -18,7 +15,7 @@
               @mouseleave="showProfileInfo = false"
               >Maria
               <q-menu
-                class="bg-transparent "
+                class="bg-transparent"
                 v-model="showProfileInfo"
                 no-parent-event
                 anchor="top middle"
@@ -33,10 +30,15 @@
             <span class="text-grey-5 text-caption"> • 5h ago</span>
           </div>
           <div>
-            <span class="text-card"
-              >Solicitou acesso em <span class="acessFor"> Clourse </span>para
-              <span class="acessLevel">EDUCADOR</span>
-            </span>
+            <div>
+              <span class="text-card">
+                Solicitou acesso em <span class="acessFor"> Clourse </span> para
+                <span class="acessLevel">EDUCADOR</span>
+              </span>
+              <div class="row items-center q-mt-xs text-grey-5 text-caption" style="gap: 6px; letter-spacing: 0.5px;">
+            <Info size="18px"/> APROVADO
+          </div>
+            </div>
           </div>
         </div>
       </div>
@@ -47,6 +49,7 @@
 <script setup>
 import { ref } from 'vue'
 import ProfileInfo from './ProfileInfo.vue'
+import { Info } from '@lucide/vue'
 
 const showProfileInfo = ref(false)
 
@@ -58,11 +61,11 @@ function openProfileInfo() {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
-.card-request{
+.card-request {
   transition: 0.2s ease;
   background-color: #212121;
 }
-.card-request:hover{  
+.card-request:hover {
   background-color: #393939;
   cursor: pointer;
 }
