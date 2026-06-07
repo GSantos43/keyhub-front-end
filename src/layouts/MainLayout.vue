@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar class="bg-grey-10">
         <!-- ESQUERDA -->
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn class="lt-md" flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
         <!-- CENTRO (Empurra os itens abaixo para a direita) -->
         <q-toolbar-title> KeyHub </q-toolbar-title>
         <!-- DIREITA -->
@@ -51,6 +51,11 @@ const linksList = [
     link: 'https://github.com/quasarframework',
   },
   {
+    title: 'Solicitações',
+    icon: 'beenhere',
+    link: '/solicitacoes',
+  },
+  {
     title: 'Users',
     icon: 'chat',
     link: 'https://chat.quasar.dev',
@@ -85,7 +90,7 @@ const qf_list = [
   },
 ]
 
-const leftDrawerOpen = ref(false)
+const leftDrawerOpen = ref(true)
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
