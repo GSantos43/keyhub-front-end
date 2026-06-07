@@ -1,21 +1,32 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-grey-10">
+        <!-- ESQUERDA -->
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- CENTRO (Empurra os itens abaixo para a direita) -->
+        <q-toolbar-title> KeyHub </q-toolbar-title>
+        <!-- DIREITA -->
+        <q-btn flat round dense icon="settings" target="_blank" />
+        <q-btn flat round dense icon="person" target="_blank" />
+        
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+    <q-drawer v-model="leftDrawerOpen" show-if-above  style="background-color: #121212;">
+      <div class="column justify-between fit">
+        <q-list>
+          <q-item-label header> KeyHub </q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
+          <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        </q-list>
+
+        <q-list>
+          <q-item-label header> KeyHub </q-item-label>
+
+          <EssentialLink v-for="link in qf_list" :key="link.title" v-bind="link" />
+        </q-list>
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -30,46 +41,47 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    title: 'Dashboard',
+    icon: 'dashboard',
+    link: '/dashboard',
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
+    title: 'Clients',
+    icon: 'security',
     link: 'https://github.com/quasarframework',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
+    title: 'Users',
     icon: 'chat',
     link: 'https://chat.quasar.dev',
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
+    title: 'Permissões',
+    icon: 'key',
     link: 'https://forum.quasar.dev',
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
+    title: 'Eventos',
+    icon: 'history',
+    link: 'https://forum.quasar.dev',
+  },
+]
+
+const qf_list = [
+  {
+    title: 'Configurações',
+    icon: 'settings',
+    link: 'https://quasar.dev',
   },
   {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
+    title: 'Suporte',
+    icon: 'info',
+    link: 'https://github.com/quasarframework',
   },
   {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    title: 'Perfil',
+    icon: 'person',
+    link: 'https://github.com/quasarframework',
   },
 ]
 
