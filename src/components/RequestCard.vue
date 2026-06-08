@@ -35,9 +35,12 @@
                 Solicitou acesso em <span class="acessFor"> Clourse </span> para
                 <span class="acessLevel">EDUCADOR</span>
               </span>
-              <div class="row items-center q-mt-xs text-grey-5 text-caption" style="gap: 6px; letter-spacing: 0.5px;">
-            <Info size="18px"/> APROVADO
-          </div>
+              <div
+                class="row items-center q-mt-xs text-grey-5 text-caption"
+                style="gap: 6px; letter-spacing: 0.5px"
+              >
+                <Info size="18px" /> APROVADO
+              </div>
             </div>
           </div>
         </div>
@@ -47,15 +50,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import ProfileInfo from './ProfileInfo.vue'
 import { Info } from '@lucide/vue'
+import { api } from 'src/boot/axios.js'
 
 const showProfileInfo = ref(false)
+
+async function getRequest() {
+  const response = await api.get('/v1/request')
+
+  console.log(response.data)
+}
 
 function openProfileInfo() {
   showProfileInfo.value = true
 }
+
+onMounted(() => getRequest())
 </script>
 
 <style scoped>
