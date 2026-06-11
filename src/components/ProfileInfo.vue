@@ -20,7 +20,7 @@
           class="text-weight-bold avatar"
           style="border-radius: 50%"
         >
-          M
+          {{ userInitial }}
         </q-avatar>
 
         <div>
@@ -30,7 +30,8 @@
               class="requester"
               @mouseenter="showProfileInfo = true"
               @mouseleave="showProfileInfo = false"
-              >Maria Fernanda Alves
+            >
+              {{ props.requester.name }}
               <q-menu
                 v-model="showProfileInfo"
                 no-parent-event
@@ -43,7 +44,9 @@
                 <ProfileInfo />
               </q-menu>
             </span>
-            <span class="text-grey-5 text-caption"> • <span>mariateste@gmail.com</span> </span>
+            <span class="text-grey-5 text-caption">
+              • <span> {{ props.requester.email }} </span>
+            </span>
           </div>
           <div></div>
         </div>
@@ -53,9 +56,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 const corAvatar = ref('black')
+
+const props = defineProps({
+  requester: { type: Object, require: true },
+})
+
+const userInitial = computed(() => {
+  const name = props.requester.name
+  if (!name) return ''
+  return name.charAt(0).toUpperCase()
+})
+
+console.log(props.requester)
 </script>
 
 <style scoped>

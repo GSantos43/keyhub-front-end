@@ -1,13 +1,11 @@
 <template>
   <q-card class="text-white q-pa-lg shadow-5 card-request" flat bordered style="border-color: #333">
     <div class="row items-center no-wrap">
-      
-      <q-avatar rounded color="grey-9" text-color="white" size="44px" class="text-weight-bold q-mr-md">
+      <q-avatar rounded text-color="white" size="44px" class="text-weight-bold q-mr-md user-icon">
         {{ userInitial }}
       </q-avatar>
 
       <div class="col column justify-center">
-        
         <div class="text-subtitle2 text-white q-mb-xs">
           <span
             class="requester"
@@ -25,172 +23,205 @@
               @mouseenter="showProfileInfo = true"
               @mouseleave="showProfileInfo = false"
             >
-              <ProfileInfo />
+              <ProfileInfo :requester="requester" />
             </q-menu>
           </span>
-          <span class="text-grey-5 text-caption"> • 5h ago</span>
+          <span class="text-grey-5 text-caption"> • {{ formatDate(props.request.createdAt) }}</span>
         </div>
 
         <div class="row items-center justify-between no-wrap">
-          
           <div class="text-card">
             Solicitou acesso em
             <span class="acessFor"> {{ props.request.client.name }} </span> para
             <span class="acessLevel">{{ props.request.field }}</span>
           </div>
 
-          <div style="min-width: 120px; display: flex; justify-content: flex-start;">
+          <div style="min-width: 120px; display: flex; justify-content: flex-start">
             <div :class="['status text-caption', statusClass]">
               <component :is="statusIcon" size="18px" /> {{ props.request.status.name }}
             </div>
           </div>
-
         </div>
-
       </div>
     </div>
   </q-card>
 </template>
 
-  <script setup>
-  import { computed, onMounted, ref } from 'vue'
-  import ProfileInfo from './ProfileInfo.vue'
-  import { CircleCheckBig, ClockFading, ShieldMinus, Info } from '@lucide/vue'
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import ProfileInfo from './ProfileInfo.vue'
+import { CircleCheckBig, ClockFading, ShieldMinus, Info } from '@lucide/vue'
+import { apiKeycloak } from 'src/boot/axios.js'
+import { formatDate } from 'src/utils/date.js'
 
-  const props = defineProps({
-    request: {
-      type: Object,
-      required: true,
-    },
-  })
+const props = defineProps({
+  request: {
+    type: Object,
+    required: true,
+  },
+})
 
-  const showProfileInfo = ref(false)
+const requester = ref({
+  name: '',
+  email: '',
+  sub: '',
+})
 
-  console.log(props.request.requester)
+async function getRequester() {
+  console.log('id do user:', props.request.requester.sub)
+  const response = await apiKeycloak.get(
+    `/admin/realms/keyhub/users/${props.request.requester.sub}`,
+  )
 
-  const userInitial = computed(() => {
-    const name = props.request?.requester?.firstName
-    if (!name) return '?' // Retorna '?' se não tiver nome
-    return name.charAt(0).toUpperCase()
-  })
-
-  function openProfileInfo() {
-    showProfileInfo.value = true
+  requester.value = {
+    name: (response.data.firstName + response.data.lastName),
+    email: response.data.email,
+    sub: response.data.id
   }
 
-  const statusClass = computed(() => {
-    const statusName = props.request?.status?.name
+  console.log(requester.value);
+  
+}
 
-    const classMap = {
-      Aprovado: 'aprovado',
-      'Em análise': 'analise',
-      Pendente: 'pendente',
-      Reprovado: 'reprovado',
-    }
+const showProfileInfo = ref(false)
 
-    return classMap[statusName] || 'text-grey-5'
-  })
+const userInitial = computed(() => {
+  const name = props.request?.requester?.firstName
+  if (!name) return '?' // Retorna '?' se não tiver nome
+  return name.charAt(0).toUpperCase()
+})
 
-  const statusIcon = computed(() => {
-    const statusName = props.request?.status?.name
+function openProfileInfo() {
+  showProfileInfo.value = true
+}
 
-    const statusMap = {
-      Aprovado: CircleCheckBig,
-      'Em análise': ClockFading,
-      Pendente: Info,
-      Reprovado: ShieldMinus,
-    }
+const statusClass = computed(() => {
+  const statusName = props.request?.status?.name
 
-    return statusMap[statusName]
-  })
-  </script>
-
-  <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
-
-  .card-request {
-    transition: 0.2s ease;
-    background-color: #212121;
-  }
-  .card-request:hover {
-    background-color: #393939;
-    cursor: pointer;
+  const classMap = {
+    Aprovado: 'aprovado',
+    'Em análise': 'analise',
+    Pendente: 'pendente',
+    Reprovado: 'reprovado',
   }
 
-  .requester {
-    font-size: 15px;
-    font-weight: 600;
-    transition: 0.3s ease;
-    text-decoration: none;
+  return classMap[statusName] || 'text-grey-5'
+})
+
+const statusIcon = computed(() => {
+  const statusName = props.request?.status?.name
+
+  const statusMap = {
+    Aprovado: CircleCheckBig,
+    'Em análise': ClockFading,
+    Pendente: Info,
+    Reprovado: ShieldMinus,
   }
 
-  .requester:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
+  return statusMap[statusName]
+})
 
-  .acessFor {
-    font-family: 'Source Code Pro', monospace;
-    letter-spacing: 0px;
-    font-weight: bold;
-    font-style: normal;
-    justify-content: center;
-    background-color: rgb(60, 60, 60);
-    padding: 4px 0px 0px 4px;
-    text-align: right;
-    align-items: center;
-    margin-right: 6px;
-    transition: 0.3s ease;
-  }
+onMounted(() => {
+  getRequester()
+})
+</script>
 
-  .card-request:hover .acessFor {
-    background-color: rgb(1, 99, 73);
-    cursor: pointer;
-  }
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
-  .acessFor:hover {
-    background-color: rgb(83, 83, 83);
-    cursor: pointer;
-  }
+.card-request {
+  transition: 0.2s ease;
+  background-color: #212121;
+}
+.card-request:hover {
+  background-color: #393939;
+  cursor: pointer;
+}
 
-  .text-card {
-    font-weight: 300;
-    font-size: 14px;
-    width: 100%;
-  }
+.requester {
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
 
-  .acessLevel {
-    color: aquamarine;
-    font-weight: 500;
-    transition: 0.4s ease;
-  }
+.requester:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 
-  .acessLevel:hover {
-    color: rgb(0, 217, 144);
-    cursor: pointer;
-  }
+.acessFor {
+  font-family: 'Source Code Pro', monospace;
+  letter-spacing: 0px;
+  font-weight: bold;
+  font-style: normal;
+  justify-content: center;
+  background-color: rgb(60, 60, 60);
+  padding: 4px 3px 3px 4px;
+  text-align: right;
+  align-items: center;
+  margin-right: 6px;
+  transition: 0.3s ease;
+}
 
-  .status {
-    text-transform: uppercase;
-    display: flex;
-    width: 100%;
-    align-items: center;
-    gap: 5px;
-  }
+.card-request:hover .acessFor {
+  background-color: rgb(1, 99, 73);
+  cursor: pointer;
+}
 
-  .status.aprovado {
-    color: aquamarine;
-  }
+.acessFor:hover {
+  background-color: rgb(83, 83, 83);
+  cursor: pointer;
+}
 
-  .status.analise {
-    color: rgb(144, 213, 255);
-  }
+.text-card {
+  font-weight: 300;
+  font-size: 14px;
+  width: 100%;
+}
 
-  .status.pendente {
-    color: rgb(249, 255, 127);
-  }
+.acessLevel {
+  color: aquamarine;
+  font-weight: 500;
+  transition: 0.4s ease;
+}
 
-  .status.reprovado {
-    color: rgb(255, 168, 127);
-  }
-  </style>
+.user-icon {
+  background-color: #383838;
+  color: #212121;
+  transition: 0.3s ease;
+}
+
+.card-request:hover .user-icon {
+  background-color: rgb(27, 27, 27);
+}
+
+.acessLevel:hover {
+  color: rgb(0, 217, 144);
+  cursor: pointer;
+}
+
+.status {
+  text-transform: uppercase;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 5px;
+}
+
+.status.aprovado {
+  color: aquamarine;
+}
+
+.status.analise {
+  color: rgb(144, 213, 255);
+}
+
+.status.pendente {
+  color: rgb(249, 255, 127);
+}
+
+.status.reprovado {
+  color: rgb(255, 168, 127);
+}
+</style>
